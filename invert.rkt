@@ -3,4 +3,4 @@
 (provide invert)
 
 (define (invert L)
-  (void))
+  (map (lambda (A) (reverse A)) L))
