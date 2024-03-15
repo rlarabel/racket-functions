@@ -1,0 +1,71 @@
+name: Autograding Tests
+'on':
+- push
+- workflow_dispatch
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Invert
+      id: invert
+      uses: education/autograding-command-grader@v1
+      with:
+        test-name: Invert
+        setup-command: ''
+        command: make test_invert
+        timeout: 1
+        max-score: 5
+    - name: x_product
+      id: x_product
+      uses: education/autograding-command-grader@v1
+      with:
+        test-name: x_product
+        setup-command: ''
+        command: make test_x_product
+        timeout: 2
+        max-score: 5
+    - name: down
+      id: down
+      uses: education/autograding-command-grader@v1
+      with:
+        test-name: down
+        setup-command: ''
+        command: make test_down
+        timeout: 2
+        max-score: 5
+    - name: swapper
+      id: swapper
+      uses: education/autograding-command-grader@v1
+      with:
+        test-name: swapper
+        setup-command: ''
+        command: make test_swapper
+        timeout: 2
+        max-score: 5
+    - name: count
+      id: count
+      uses: education/autograding-command-grader@v1
+      with:
+        test-name: count
+        setup-command: ''
+        command: make count
+        timeout: 2
+        max-score: 5
+    - name: Autograding Reporter
+      uses: education/autograding-grading-reporter@v1
+      env:
+        INVERT_RESULTS: "${{steps.invert.outputs.result}}"
+        X_PRODUCT_RESULTS: "${{steps.x_product.outputs.result}}"
+        DOWN_RESULTS: "${{steps.down.outputs.result}}"
+        SWAPPER_RESULTS: "${{steps.swapper.outputs.result}}"
+        COUNT_RESULTS: "${{steps.count.outputs.result}}"
+      with:
+        runners: invert,x_product,down,swapper,count
